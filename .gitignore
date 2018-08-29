@@ -1,2 +1,3 @@
-spring_logs/spring_logs/__pycache__
-spring_logs/spring_logs/settings_local.py
+.idea
+spring_logs/__pycache__
+spring_logs/settings_local.py
