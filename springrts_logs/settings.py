@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -9,7 +11,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'springrts_logs',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -22,7 +26,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'spring_logs.urls'
+ROOT_URLCONF = 'springrts_logs.urls'
 
 TEMPLATES = [
     {
@@ -40,7 +44,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'spring_logs.wsgi.application'
+WSGI_APPLICATION = 'springrts_logs.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -59,8 +63,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
 
 USE_L10N = True
@@ -71,8 +73,10 @@ STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+        'rest_framework.permissions.AllowAny'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20,
 }
 
 # import default site specific settings
@@ -80,7 +84,6 @@ from .settings_local_ import *
 # import custom site specific settings
 try:
     from .settings_local import *
-except ImportException as exc:
+except ImportError as exc:
     print('ImportException: {}\nCopy local_settings_.py to local_settings.py and adapt to your environment.'.format(exc))
     raise
-
