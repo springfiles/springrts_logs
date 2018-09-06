@@ -39,10 +39,10 @@ Documentation and schemes for client auto-generation are available:
    * ReDoc: https://dom.ain/redoc/
 * Core API: https://dom.ain/schema.js
 
-JSONRPC
-.......
-TODO
+JSON-RPC and XML-RPC
+....................
+Methods ``logfile_create``, ``logfile_get``, ``logfile_list`` and ``tag_list`` are available at https://dom.ain/rpc/ for both JSON-RPC and XML-RPC. At that URL is also a website with online documentation, when opened with a browser.
 
-XMLRPC
-......
-TODO
+Whether to server HTML (documentation), JSON-RPC or XML-RPC is decided by the content type of the request.
+
+(For JSON-RPC currently ``application/json`` is required and ``application/json-rpc`` is ignored. I have opened a `PR <https://github.com/alorence/django-modern-rpc/pull/25>`_ to fix this.)

@@ -25,9 +25,13 @@ class LogfileSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ('created',)
 
     def create(self, validated_data):
-        logfile = Logfile.objects.create(name=validated_data['name'], text=validated_data['text'])
-        if 'tags' in validated_data:
-            tags = [t.strip() for t in validated_data['tags'] if t.strip()]
+        return self.create_logfile(**validated_data)
+
+    @staticmethod
+    def create_logfile(name, text, tags=None):
+        logfile = Logfile.objects.create(name=name, text=text)
+        if tags:
+            tags = [t.strip() for t in tags if t.strip()]
             tag_pks = [Tag.objects.get_or_create(name=tag)[0].pk for tag in tags]
             logfile.tags.add(*tag_pks)
         return logfile

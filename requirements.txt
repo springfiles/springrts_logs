@@ -3,7 +3,9 @@ Django<2.1
 django-crispy-forms>=1.7
 django-filter>=2.0
 django-guardian>=1.4
+django-modern-rpc==0.11.1
 djangorestframework>=3.8
+docutils>=0.14
 drf-yasg>=1.10
 Markdown>=2.6
 mysqlclient>=1.3.7

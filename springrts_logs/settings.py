@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'springrts_logs',
     'rest_framework',
     'drf_yasg',
+    'modernrpc',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +79,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20,
 }
+
+MODERNRPC_METHODS_MODULES = [
+    'springrts_logs.rpc_methods',
+]
+MODERNRPC_DOC_FORMAT = 'rst'
 
 # import default site specific settings
 from .settings_local_ import *

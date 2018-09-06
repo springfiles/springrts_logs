@@ -32,5 +32,13 @@ class Logfile(models.Model):
             self.pk, ','.join(self.tags.all().values_list('name', flat=True)), self.name[:20], self.text[:30]
         )
 
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'text': self.text,
+            'tags': list(self.tags.all().values_list('name', flat=True)),
+            'created': str(self.created),
+        }
+
     class Meta:
         ordering = ('created',)
