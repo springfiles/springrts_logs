@@ -39,10 +39,26 @@ Documentation and schemes for client auto-generation are available:
    * ReDoc: https://dom.ain/redoc/
 * Core API: https://dom.ain/schema.js
 
-JSON-RPC and XML-RPC
-....................
-Methods ``logfile_create``, ``logfile_get``, ``logfile_list`` and ``tag_list`` are available at https://dom.ain/rpc/ for both JSON-RPC and XML-RPC. At that URL is also a website with online documentation, when opened with a browser.
+JSON-RPC and XML-RPC over HTTP
+..............................
+Methods ``logfile_create``, ``logfile_get``, ``logfile_list`` and ``tag_list`` are available at https://dom.ain/rpc/ for both JSON-RPC (v2) and XML-RPC. At that URL is also a website with online documentation, when opened with a browser.
 
 Whether to server HTML (documentation), JSON-RPC or XML-RPC is decided by the content type of the request.
 
 (For JSON-RPC currently ``application/json`` is required and ``application/json-rpc`` is ignored. I have opened a `PR <https://github.com/alorence/django-modern-rpc/pull/25>`_ to fix this.)
+
+JSON-RPC over TCP
+.................
+The same methods as JSON-RPC over HTTP are also available over plain TCP.
+
+The port can be set, when starting the service via ``./manage.py runserver_jsonrpc_over_tcp <port>``
+
+
+Installing
+----------
+* create a virtualenv for Python 3.5+
+* ``pip install -U -r requirements.txt``
+* setup DB, copy ``settings_local_.py`` to ``settings_local.py`` and adjust it
+* ./manage.py migrate
+* ``cp conf/gunicorn_logs /etc/gunicorn.d``, adjust, (re)start Gunicorn
+* ``cp conf/logs_via_tcp.service /etc/systemd/system``, adjust, enable, start

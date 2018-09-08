@@ -1,0 +1,21 @@
+# -*- coding: utf-8 -*-
+
+#
+# http://docs.gunicorn.org/en/19.6.0/settings.html
+#
+
+# from multiprocessing import cpu_count
+
+
+mode = 'wsgi'
+working_dir = '/home/daniel/springlogs/'
+user = 'daniel'
+group = 'nogroup'
+bind = '127.0.0.1:9898'
+workers = 2  # max(2, min(4, cpu_count()))
+timeout = 10
+reload = False
+loglevel = 'debug'
+capture_output = True
+accesslog = '/home/daniel/springlogs/gunicorn_access.log'
+errorlog = '/home/daniel/springlogs/gunicorn_error.log'

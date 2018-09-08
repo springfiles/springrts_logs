@@ -1,0 +1,14 @@
+[Unit]
+Description=SpringRTS logfile service via JSON-RPC over TCP
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=daniel
+Group=nogroup
+Restart=always
+RestartSec=5
+ExecStart=/home/daniel/venv_springlogs /home/daniel/springlogs/manage.py runserver_jsonrpc_over_tcp 5555

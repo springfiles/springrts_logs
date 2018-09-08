@@ -8,11 +8,19 @@
 # You should have received a copy of the GNU Affero General Public License v3
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import asyncio
+import asyncore
+import signal
 from six import string_types
 from modernrpc.core import rpc_method
 from modernrpc.exceptions import RPCInvalidParams
+from jsonrpcserver.aio import AsyncMethods
+from jsonrpcserver.exceptions import InvalidParams, ParseError
 from .models import Logfile, Tag
 from .serializers import LogfileSerializer
+
+
+InvalidParamsException = RPCInvalidParams  # plain TCP server will set this to InvalidParams
 
 
 @rpc_method
@@ -30,11 +38,11 @@ def logfile_create(name, text, tags=None):
     :rtype: int
     """
     if not isinstance(name, string_types) or not isinstance(text, string_types) or not (isinstance(tags, list) or tags is None):
-        raise RPCInvalidParams('An argument has the wrong type.')
+        raise InvalidParamsException('An argument has the wrong type.')
     if tags:
         for tag in tags:
             if not isinstance(tag, string_types):
-                raise RPCInvalidParams('Argument "tags" must be a list of strings.')
+                raise InvalidParamsException('Argument "tags" must be a list of strings.')
     return LogfileSerializer.create_logfile(name, text, tags).pk
 
 
@@ -52,11 +60,11 @@ def logfile_get(logfile_id):
     :rtype: dict
     """
     if not isinstance(logfile_id, int):
-        raise RPCInvalidParams('Argument has wrong type.')
+        raise InvalidParamsException('Argument has wrong type.')
     try:
         logfile = Logfile.objects.get(pk=logfile_id)
     except Logfile.DoesNotExist:
-        raise RPCInvalidParams('Logfile with ID {!r} does not exist.'.format(logfile_id))
+        raise InvalidParamsException('Logfile with ID {!r} does not exist.'.format(logfile_id))
 
     return logfile.to_dict()
 
@@ -75,7 +83,7 @@ def logfile_list(name=None, **kwargs):
     :rtype: list[[int, str], ..]
     """
     if not (isinstance(name, string_types) or name is None):
-        raise RPCInvalidParams('Argument has wrong type.')
+        raise InvalidParamsException('Argument has wrong type.')
     if name:
         kwargs = dict(name__icontains=name)
     else:
@@ -97,9 +105,62 @@ def tag_list(name=None):
     :rtype: list[str]
     """
     if not (isinstance(name, string_types) or name is None):
-        raise RPCInvalidParams('Argument has wrong type.')
+        raise InvalidParamsException('Argument has wrong type.')
     if name:
         kwargs = dict(name__icontains=name)
     else:
         kwargs = {}
     return list(Tag.objects.filter(**kwargs).values_list('name', flat=True))
+
+
+async def _logfile_create_async(name, text, tags=None):
+    return logfile_create(name, text, tags)
+
+
+async def _logfile_get_async(logfile_id):
+    return logfile_get(logfile_id)
+
+
+async def _logfile_list_async(name=None):
+    return logfile_list(name)
+
+
+async def _tag_list_async(name=None):
+    return tag_list(name)
+
+
+async def _handle_request(reader, writer):
+    methods = AsyncMethods(
+        logfile_create=lambda name, text, tags=None: _logfile_create_async(name, text, tags),
+        logfile_get=lambda logfile_id: _logfile_get_async(logfile_id),
+        logfile_list=lambda name=None: _logfile_list_async(name),
+        tag_list=lambda name=None: _tag_list_async(name),
+    )
+    while True:
+        request_raw = await reader.readline()
+        if not request_raw:
+            break
+        try:
+            request_str = request_raw.decode('utf-8')
+        except UnicodeDecodeError:
+            raise ParseError('Error parsing request.')
+        response_obj = await methods.dispatch(request_str)
+        response = str(response_obj).encode('utf-8')
+        writer.write(response)
+
+
+def _term_handler(signum, frame):
+    raise asyncore.ExitNow('SIGTERM received')
+
+
+def run_tcp_server():
+    global InvalidParamsException
+    InvalidParamsException = InvalidParams
+    loop = asyncio.get_event_loop()
+    server = asyncio.start_server(_handle_request, loop=loop, port=5555)
+    server = loop.run_until_complete(server)
+    signal.signal(signal.SIGTERM, _term_handler)
+    try:
+        loop.run_forever()
+    except (KeyboardInterrupt, asyncore.ExitNow):
+        pass
