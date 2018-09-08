@@ -62,7 +62,7 @@ def logfile_get(logfile_id):
 
 
 @rpc_method
-def logfile_list(request, name=None, **kwargs):
+def logfile_list(name=None, **kwargs):
     """
     List existing logfile objects.
 
