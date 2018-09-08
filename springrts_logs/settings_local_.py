@@ -17,3 +17,8 @@ DATABASES = {
     }
 }
 TIME_ZONE = 'UTC'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}

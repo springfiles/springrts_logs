@@ -15,7 +15,10 @@ from six import string_types
 from modernrpc.core import rpc_method
 from modernrpc.exceptions import RPCInvalidParams
 from jsonrpcserver.aio import AsyncMethods
-from jsonrpcserver.exceptions import InvalidParams, ParseError
+from jsonrpcserver.exceptions import InvalidParams, MethodNotFound, ParseError
+from jsonrpcserver.response import ExceptionResponse
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.exceptions import Throttled
 from .models import Logfile, Tag
 from .serializers import LogfileSerializer
 
@@ -113,6 +116,30 @@ def tag_list(name=None):
     return list(Tag.objects.filter(**kwargs).values_list('name', flat=True))
 
 
+class FakeRequest(object):
+    class FakeUser(object):
+        is_authenticated = False
+
+    def __init__(self, ip):
+        self.user = self.FakeUser()
+        self.ip = ip
+
+
+class JsonTcpAnonRateThrottle(AnonRateThrottle):
+    def get_ident(self, request):
+        """
+        Identify the machine making the request.
+        """
+        print('get_ident() request={!r}'.format(request))
+        if isinstance(request, FakeRequest):
+            print('get_ident() return={!r}'.format(request.ip))
+            return request.ip
+        else:
+            res = super(JsonTcpAnonRateThrottle, self).get_ident(request)
+            print('get_ident() res={!r}'.format(res))
+            return res
+
+
 async def _logfile_create_async(name, text, tags=None):
     return logfile_create(name, text, tags)
 
@@ -130,6 +157,25 @@ async def _tag_list_async(name=None):
 
 
 async def _handle_request(reader, writer):
+    from .views import LogfileViewSet  # cannot import this at the top, it'd cause a circular dependency
+    # check rate limiting
+    peer = writer.get_extra_info('socket').getpeername()
+    fdr = FakeRequest(peer[0])
+    lfvs = LogfileViewSet()
+    try:
+        lfvs.check_throttles(fdr)
+    except Throttled as exc:
+        # There is no error code for "permission denied" or the like in the
+        # JSON-RPC spec, so using "Method not available" as it's somewhat
+        # true (although it usually means that no method with the requested
+        # methods name exists).
+        json_exc = MethodNotFound(str(exc))
+        json_exc.message = str(exc)
+        response_obj = ExceptionResponse(json_exc, None)
+        response = str(response_obj).encode('utf-8')
+        writer.write(response)
+        return
+
     methods = AsyncMethods(
         logfile_create=lambda name, text, tags=None: _logfile_create_async(name, text, tags),
         logfile_get=lambda logfile_id: _logfile_get_async(logfile_id),

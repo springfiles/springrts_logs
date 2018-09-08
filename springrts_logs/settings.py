@@ -78,6 +78,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_THROTTLE_CLASSES': (
+        'springrts_logs.rpc_methods.JsonTcpAnonRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '200/hour',
+    },
 }
 
 MODERNRPC_METHODS_MODULES = [
