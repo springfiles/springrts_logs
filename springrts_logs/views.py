@@ -9,6 +9,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from rest_framework import mixins, viewsets
+from rest_framework.response import Response
 from .models import Logfile, Tag
 from .serializers import LogfileSerializer, TagSerializer
 
@@ -25,6 +26,24 @@ class LogfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retr
     """
     serializer_class = LogfileSerializer
     queryset = Logfile.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        # shorten `text` in list view (not in retrieve view)
+        # code copied from rest_framework.mixins.ListModelMixin.list()
+        # only change is addition of text shortening
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            for logfile_repr in serializer.data:
+                logfile_repr['text'] = logfile_repr['text'][:200]
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        for logfile_repr in serializer.data:
+            logfile_repr['text'] = logfile_repr['text'][:200]
+        return Response(serializer.data)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
