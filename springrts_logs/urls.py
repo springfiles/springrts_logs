@@ -15,6 +15,7 @@ from rest_framework.documentation import include_docs_urls
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from modernrpc.views import RPCEntryPoint
+from .feeds import LatestLogfileUploadFeed
 from .views import LogfileViewSet, TagViewSet
 
 
@@ -40,6 +41,7 @@ urlpatterns = [
     path(r'', include(router.urls)),
     path(r'admin/', admin.site.urls),
     path(r'api-auth/', include('rest_framework.urls')),
+    path('feed/latest/', LatestLogfileUploadFeed()),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path(r'rpc/', RPCEntryPoint.as_view(enable_doc=True)),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
