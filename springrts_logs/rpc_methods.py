@@ -130,14 +130,10 @@ class JsonTcpAnonRateThrottle(AnonRateThrottle):
         """
         Identify the machine making the request.
         """
-        print('get_ident() request={!r}'.format(request))
         if isinstance(request, FakeRequest):
-            print('get_ident() return={!r}'.format(request.ip))
             return request.ip
         else:
-            res = super(JsonTcpAnonRateThrottle, self).get_ident(request)
-            print('get_ident() res={!r}'.format(res))
-            return res
+            return super(JsonTcpAnonRateThrottle, self).get_ident(request)
 
 
 async def _logfile_create_async(name, text, tags=None):
