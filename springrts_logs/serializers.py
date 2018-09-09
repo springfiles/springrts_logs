@@ -8,6 +8,7 @@
 # You should have received a copy of the GNU Affero General Public License v3
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import magic
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from .models import Logfile, Tag
@@ -41,6 +42,14 @@ class LogfileSerializer(serializers.HyperlinkedModelSerializer):
         res = super().to_representation(instance)
         res['tags'] = list(instance.tags.all().values_list('name', flat=True))
         return res
+
+    @staticmethod
+    def validate_text(value):
+        mime_type = magic.from_buffer(value[:200], mime=True)
+        if not mime_type.startswith('text/'):
+            raise serializers.ValidationError("Content type of 'text' argument must be 'text/*', detected {!r}.".format(
+                mime_type))
+        return value
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):

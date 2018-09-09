@@ -19,6 +19,7 @@ from jsonrpcserver.exceptions import InvalidParams, MethodNotFound, ParseError
 from jsonrpcserver.response import ExceptionResponse
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.exceptions import Throttled
+from rest_framework.serializers import ValidationError
 from .models import Logfile, Tag
 from .serializers import LogfileSerializer
 
@@ -46,6 +47,10 @@ def logfile_create(name, text, tags=None):
         for tag in tags:
             if not isinstance(tag, string_types):
                 raise InvalidParamsException('Argument "tags" must be a list of strings.')
+    try:
+        text = LogfileSerializer.validate_text(text)
+    except ValidationError as exc:
+        raise InvalidParamsException(', '.join(exc.detail))
     return LogfileSerializer.create_logfile(name, text, tags).pk
 
 
