@@ -1,0 +1,8 @@
+[Unit]
+Description=socket of gunicorn daemon for springrts_logs service
+
+[Socket]
+ListenStream=/run/gunicorn/socket
+
+[Install]
+WantedBy=sockets.target
