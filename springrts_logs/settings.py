@@ -85,7 +85,7 @@ REST_FRAMEWORK = {
         'anon': '200/hour',
     },
 }
-
+MODERNRPC_HANDLERS = ['modernrpc.handlers.JSONRPCHandler']
 MODERNRPC_METHODS_MODULES = [
     'springrts_logs.rpc_methods',
 ]

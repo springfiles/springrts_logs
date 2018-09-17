@@ -47,6 +47,8 @@ Whether to server HTML (documentation), JSON-RPC or XML-RPC is decided by the co
 
 (For JSON-RPC currently ``application/json`` is required and ``application/json-rpc`` is ignored. I have opened a `PR <https://github.com/alorence/django-modern-rpc/pull/25>`_ to fix this.)
 
+XML-RPC is currently disabled.
+
 JSON-RPC over TCP
 .................
 The same methods as JSON-RPC over HTTP are also available over plain TCP.
