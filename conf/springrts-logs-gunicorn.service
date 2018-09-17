@@ -1,6 +1,6 @@
 [Unit]
 Description=gunicorn daemon for springrts_logs service
-Requires=gunicorn.socket
+Requires=springrts-logs-gunicorn.socket
 After=network.target
 
 [Service]
@@ -9,7 +9,7 @@ User=dansan
 Group=dansan
 RuntimeDirectory=gunicorn
 WorkingDirectory=/home/dansan/sites/springrts_logs
-ExecStart=/usr/bin/gunicorn --pid /run/gunicorn/pid   \
+ExecStart=/home/dansan/virtenvs/spring_logs/bin/gunicorn --pid /run/gunicorn/pid   \
           --bind unix:/run/gunicorn/socket springrts_logs.wsgi
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
