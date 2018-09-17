@@ -5,16 +5,13 @@ DEBUG = False
 ALLOWED_HOSTS = []
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'spring_logs',
         'USER': 'spring_logs',
         'PASSWORD': 's3cr3t',
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     },
-    'OPTIONS': {
-        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-    }
 }
 TIME_ZONE = 'UTC'
 CACHES = {
