@@ -8,14 +8,14 @@
 
 
 mode = 'wsgi'
-working_dir = '/home/daniel/springlogs/'
-user = 'daniel'
-group = 'nogroup'
+working_dir = '/home/infolog/'
+user = 'infolog'
+group = 'infolog'
 bind = '127.0.0.1:9898'
 workers = 2  # max(2, min(4, cpu_count()))
 timeout = 10
 reload = False
 loglevel = 'debug'
 capture_output = True
-accesslog = '/home/daniel/springlogs/gunicorn_access.log'
-errorlog = '/home/daniel/springlogs/gunicorn_error.log'
+accesslog = '/home/infolog/gunicorn_access.log'
+errorlog = '/home/infolog/gunicorn_error.log'

@@ -5,11 +5,11 @@ After=network.target
 
 [Service]
 PIDFile=/run/gunicorn/pid
-User=dansan
-Group=dansan
+User=infolog
+Group=infolog
 RuntimeDirectory=gunicorn
-WorkingDirectory=/home/dansan/sites/springrts_logs
-ExecStart=/home/dansan/virtenvs/spring_logs/bin/gunicorn --pid /run/gunicorn/pid   \
+WorkingDirectory=/home/infolog/sites/springrts_logs
+ExecStart=/home/infolog/virtenvs/spring_logs/bin/gunicorn --pid /run/gunicorn/pid   \
           --bind unix:/run/gunicorn/socket springrts_logs.wsgi
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID

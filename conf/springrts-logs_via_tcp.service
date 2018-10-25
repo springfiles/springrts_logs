@@ -7,8 +7,8 @@ WantedBy=multi-user.target
 
 [Service]
 Type=simple
-User=daniel
-Group=nogroup
+User=infolog
+Group=infolog
 Restart=always
 RestartSec=5
-ExecStart=/home/daniel/venv_springlogs /home/daniel/springlogs/manage.py runserver_jsonrpc_over_tcp 5555
+ExecStart=/home/infolog/venv_springlogs /home/infolog/springlogs/manage.py runserver_jsonrpc_over_tcp 5555
