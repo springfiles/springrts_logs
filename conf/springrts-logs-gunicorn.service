@@ -9,8 +9,15 @@ User=infolog
 Group=infolog
 RuntimeDirectory=gunicorn
 WorkingDirectory=/home/infolog/sites/springrts_logs
-ExecStart=/home/infolog/virtenvs/spring_logs/bin/gunicorn --pid /run/gunicorn/pid   \
-          --bind unix:/run/gunicorn/socket springrts_logs.wsgi
+ExecStart=/home/infolog/virtenvs/spring_logs/bin/gunicorn \
+	--pid /run/gunicorn/pid   \
+	--bind unix:/run/gunicorn/socket \
+	--access-logfile /home/infolog/springrts_logs.access.log \
+	--error-logfile /home/infolog/springrts_logs.error.log \
+	--log-level debug \
+	--workers 2 \
+	--capture-output \
+	springrts_logs.wsgi
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 PrivateTmp=true

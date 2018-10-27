@@ -37,12 +37,12 @@ class LogfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retr
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             for logfile_repr in serializer.data:
-                logfile_repr['text'] = logfile_repr['text'][:200]
+                logfile_repr['text'] = Logfile.shorten_text(logfile_repr['text'], 200),
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         for logfile_repr in serializer.data:
-            logfile_repr['text'] = logfile_repr['text'][:200]
+            logfile_repr['text'] = Logfile.shorten_text(logfile_repr['text'], 200)
         return Response(serializer.data)
 
 

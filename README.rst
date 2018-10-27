@@ -53,6 +53,9 @@ The same methods as JSON-RPC over HTTP are also available over plain TCP.
 
 The port can be set, when starting the service via ``./manage.py runserver_jsonrpc_over_tcp <port>``
 
+RSS feed
+--------
+An RSS feed listing the latest logfile uploads can be found at https://dom.ain/feed/latest/
 
 Installing
 ----------
@@ -63,7 +66,3 @@ Installing
 * ``cp conf/gunicorn_logs /etc/gunicorn.d``, adjust, (re)start Gunicorn
 * ``cp conf/logs_via_tcp.service /etc/systemd/system``, adjust, enable, start
 * if you wish to share the cache (and thus the throttling counters) between the Django HTTP process and the JSON-RPC-over-TCP process, setup memcached and adjust the Django ``CACHES`` settings accordingly (see `Django docs <https://docs.djangoproject.com/en/2.0/topics/cache/#setting-up-the-cache>`_)
-
-RSS feed
---------
-An RSS feed listing the latest logfile uploads can be found at https://dom.ain/feed/latest/

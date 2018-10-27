@@ -8,6 +8,7 @@
 # You should have received a copy of the GNU Affero General Public License v3
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Dict
 from django.db import models
 
 
@@ -32,13 +33,21 @@ class Logfile(models.Model):
             self.pk, ','.join(self.tags.all().values_list('name', flat=True)), self.name[:20], self.text[:30]
         )
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, str]:
         return {
             'name': self.name,
             'text': self.text,
             'tags': list(self.tags.all().values_list('name', flat=True)),
             'created': str(self.created),
         }
+
+    @property
+    def short_text(self) -> str:
+        return self.shorten_text(self.text, 500)
+
+    @staticmethod
+    def shorten_text(text: str, length: int) -> str:
+        return '{}\n({} characters truncated)'.format(text[:length], len(text[length:]))
 
     class Meta:
         ordering = ('created',)

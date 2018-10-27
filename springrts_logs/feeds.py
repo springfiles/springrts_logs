@@ -21,18 +21,18 @@ class LatestLogfileUploadFeed(Feed):
     description = "Logfile uploads."
 
     @staticmethod
-    def _escape(text):
+    def _escape(text: str) -> str:
         text = xml_escape(text)
         return re.sub(r'[\x00-\x08\x0B-\x0C\x0E-\x1F]', '', text)
 
-    def items(self):
+    def items(self) -> Logfile:
         return Logfile.objects.order_by('-created')[:20]
 
-    def item_title(self, item):
-        return self._escape(item.name)
+    def item_title(self, item: Logfile) -> str:
+        return self._escape('{} [{}]'.format(item.name, ', '.join(item.tags)))
 
-    def item_description(self, item):
-        return self._escape(item.text[:500])
+    def item_description(self, item: Logfile) -> str:
+        return self._escape(item.short_text)
 
-    def item_link(self, item):
+    def item_link(self, item: Logfile) -> str:
         return reverse('logfile-detail', args=[item.pk])
