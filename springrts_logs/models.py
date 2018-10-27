@@ -47,7 +47,10 @@ class Logfile(models.Model):
 
     @staticmethod
     def shorten_text(text: str, length: int) -> str:
-        return '{}\n({} characters truncated)'.format(text[:length], len(text[length:]))
+        if length < len(text):
+            return '{}\n({} characters truncated)'.format(text[:length], len(text[length:]))
+        else:
+            return text
 
     class Meta:
         ordering = ('created',)

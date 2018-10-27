@@ -29,7 +29,7 @@ class LatestLogfileUploadFeed(Feed):
         return Logfile.objects.order_by('-created')[:20]
 
     def item_title(self, item: Logfile) -> str:
-        return self._escape('{} [{}]'.format(item.name, ', '.join(item.tags)))
+        return self._escape('{} [{}]'.format(item.name, ', '.join(item.tags.values_list('name', flat=True))))
 
     def item_description(self, item: Logfile) -> str:
         return self._escape(item.short_text)
