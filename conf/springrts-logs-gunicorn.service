@@ -4,14 +4,17 @@ Requires=springrts-logs-gunicorn.socket
 After=network.target
 
 [Service]
-PIDFile=/run/gunicorn/pid
+PermissionsStartOnly=True
+RuntimeDirectory=gunicorn
+RuntimeDirectoryMode=0775
+PIDFile=/run/gunicorn/infolog.pid
 User=infolog
 Group=infolog
 RuntimeDirectory=gunicorn
 WorkingDirectory=/home/infolog/sites/springrts_logs
 ExecStart=/home/infolog/virtenvs/spring_logs/bin/gunicorn \
-	--pid /run/gunicorn/pid   \
-	--bind unix:/run/gunicorn/socket \
+	--pid /run/gunicorn/infolog.pid   \
+	--bind unix:/run/gunicorn/infolog.socket \
 	--access-logfile /home/infolog/springrts_logs.access.log \
 	--error-logfile /home/infolog/springrts_logs.error.log \
 	--log-level debug \
