@@ -1,5 +1,5 @@
 [Unit]
-Description=socket of gunicorn daemon for springrts_logs service
+Description=logs.springrts.com socket
 
 [Socket]
 ListenStream=/run/gunicorn/infolog.socket

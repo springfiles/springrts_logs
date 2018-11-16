@@ -1,5 +1,5 @@
 [Unit]
-Description=SpringRTS logfile service via JSON-RPC over TCP
+Description=logs.springrts.com daemon for JSON-RPC over TCP
 After=network.target
 
 [Install]

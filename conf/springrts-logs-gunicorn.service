@@ -1,5 +1,5 @@
 [Unit]
-Description=gunicorn daemon for springrts_logs service
+Description=logs.springrts.com daemon
 Requires=springrts-logs-gunicorn.socket
 After=network.target
 
@@ -13,14 +13,9 @@ Group=infolog
 RuntimeDirectory=gunicorn
 WorkingDirectory=/home/infolog/sites/springrts_logs
 ExecStart=/home/infolog/virtenvs/spring_logs/bin/gunicorn \
-	--pid /run/gunicorn/infolog.pid   \
-	--bind unix:/run/gunicorn/infolog.socket \
-	--access-logfile /home/infolog/springrts_logs.access.log \
-	--error-logfile /home/infolog/springrts_logs.error.log \
-	--log-level debug \
-	--workers 2 \
-	--capture-output \
-	springrts_logs.wsgi
+    --pid /run/gunicorn/infolog.pid \
+    --config /home/infolog/sites/springrts_logs/conf/gunicorn_conf.py \
+    springrts_logs.wsgi
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 PrivateTmp=true
