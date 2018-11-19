@@ -14,7 +14,7 @@ The are two object types:
 
 * ``logfile``: The logfile. Allowed operations to unauthenticated clients: ``create``, ``list``, ``read``. Attributes:
    * ``name``: The name of the logfile (string).
-   * ``text``: The content of the logfile (string).
+   * ``text``: The content of the logfile, *UTF-8 encoded* (string).
    * ``tags``: Tags for this logfile (list of strings).
    * ``created``: The date the object was created (date, read only).
 * ``tag``: A tag used on one or more logfile objects. Allowed operations to unauthenticated clients: ``list``, ``read``. Attributes:
