@@ -12,6 +12,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework.documentation import include_docs_urls
+from rest_framework.urlpatterns import format_suffix_patterns
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from modernrpc.core import JSONRPC_PROTOCOL
@@ -37,9 +38,11 @@ router = routers.SimpleRouter()
 router.register(r'logfiles', LogfileViewSet)
 router.register(r'tags', TagViewSet)
 
-urlpatterns = [
+urlpatterns = format_suffix_patterns([
     path(r'', include_docs_urls(title='SpringRTS Logfile Upload API')),
     path(r'', include(router.urls)),
+])
+urlpatterns += [
     path(r'admin/', admin.site.urls),
     path(r'api-auth/', include('rest_framework.urls')),
     path('feed/latest/', LatestLogfileUploadFeed()),

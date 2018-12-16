@@ -10,8 +10,28 @@
 
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
+from rest_framework.negotiation import DefaultContentNegotiation
 from .models import Logfile, Tag
 from .serializers import LogfileSerializer, TagSerializer
+from .renderers import SpringBoardLogRenderer
+
+
+class SpringBoardContentNegotiation(DefaultContentNegotiation):
+    def select_renderer(self, request, renderers, format_suffix=None):
+        accepts = self.get_accept_list(request)
+        if format_suffix != 'api' and 'text/html' in accepts:
+            pk = request.parser_context.get('kwargs', {}).get('pk')
+            if pk:
+                instance = Logfile.objects.get(pk=pk)
+                if format_suffix != 'json' and instance.tags.filter(name='SpringBoard').exists():
+                    for renderer in renderers:
+                        if isinstance(renderer, SpringBoardLogRenderer):
+                            return renderer, 'text/html'
+                    else:
+                        raise RuntimeError('SpringBoardLogRenderer not in list of renderers.')
+
+        return super(SpringBoardContentNegotiation, self).select_renderer(request, renderers, format_suffix)
 
 
 class LogfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -26,6 +46,8 @@ class LogfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retr
     """
     serializer_class = LogfileSerializer
     queryset = Logfile.objects.all()
+    renderer_classes = (JSONRenderer, BrowsableAPIRenderer, SpringBoardLogRenderer)
+    content_negotiation_class = SpringBoardContentNegotiation
 
     def list(self, request, *args, **kwargs):
         # shorten `text` in list view (not in retrieve view)
@@ -43,6 +65,20 @@ class LogfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retr
         serializer = self.get_serializer(queryset, many=True)
         for logfile_repr in serializer.data:
             logfile_repr['text'] = Logfile.shorten_text(logfile_repr['text'], 200)
+        return Response(serializer.data)
+
+    def retrieve(self, request, format=None, *args, **kwargs):
+        instance = self.get_object()
+
+        if (
+                request.accepted_renderer.format == 'html' and
+                format != 'api' and
+                instance.tags.filter(name='SpringBoard').exists()
+        ):
+            self.renderer_classes = (SpringBoardLogRenderer,)
+            return Response({'logfile': instance}, template_name='logfile_SpringBoard_detail.html')
+
+        serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
 
