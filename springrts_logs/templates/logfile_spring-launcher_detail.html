@@ -12,13 +12,20 @@
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/journal/bootstrap.min.css" integrity="sha384-5C8TGNupopdjruopVTTrVJacBbWqxHK9eis5DB+DYE6RfqIJapdLBRUdaZBTq7mE" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+    <style type="text/css">
+        {#A:link { COLOR: black; TEXT-DECORATION: none; font-weight: normal }#}
+        A:visited { COLOR: black }
+        A:active { COLOR: black }
+        A:hover { COLOR: blue }
+    </style>
 </head>
 <body>
 <div class="container-fluid">
     <div class="jumbotron jumbotron-fluid">
       <div class="container">
         <h1 class="display-4">{{ logfile.name }}</h1>
-          <p><i class="fas fa-calendar-day"></i> {{ logfile.created }} &nbsp;&nbsp; {% for tag in logfile.tags.all %}<i class="fas fa-tag"></i> {{ tag.name }} {% endfor %}</p>
+          <p><i class="fas fa-calendar-day"></i> {{ logfile.created }} &nbsp;&nbsp; {% for tag in logfile.tags.all %}<a href="{{ tag.get_absolute_url }}"><i class="fas fa-tag"></i> {{ tag.name }}</a> {% endfor %}</p>
       </div>
     </div>
     <table class="table table-hover table-sm">

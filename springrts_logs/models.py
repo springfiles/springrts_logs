@@ -10,6 +10,8 @@
 
 from typing import Dict
 from django.db import models
+from django.urls import reverse
+from rest_framework.reverse import reverse
 
 
 class Tag(models.Model):
@@ -20,6 +22,9 @@ class Tag(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('tag-detail', kwargs={'pk': str(self.name)})
 
 
 class Logfile(models.Model):
