@@ -14,24 +14,24 @@ from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.negotiation import DefaultContentNegotiation
 from .models import Logfile, Tag
 from .serializers import LogfileSerializer, TagSerializer
-from .renderers import SpringBoardLogRenderer
+from .renderers import SpringLauncherLogRenderer
 
 
-class SpringBoardContentNegotiation(DefaultContentNegotiation):
+class SpringLauncherContentNegotiation(DefaultContentNegotiation):
     def select_renderer(self, request, renderers, format_suffix=None):
         accepts = self.get_accept_list(request)
         if format_suffix != 'api' and 'text/html' in accepts:
             pk = request.parser_context.get('kwargs', {}).get('pk')
             if pk:
                 instance = Logfile.objects.get(pk=pk)
-                if format_suffix != 'json' and instance.tags.filter(name='SpringBoard').exists():
+                if format_suffix != 'json' and instance.tags.filter(name='spring-launcher').exists():
                     for renderer in renderers:
-                        if isinstance(renderer, SpringBoardLogRenderer):
+                        if isinstance(renderer, SpringLauncherLogRenderer):
                             return renderer, 'text/html'
                     else:
-                        raise RuntimeError('SpringBoardLogRenderer not in list of renderers.')
+                        raise RuntimeError('SpringLauncherLogRenderer not in list of renderers.')
 
-        return super(SpringBoardContentNegotiation, self).select_renderer(request, renderers, format_suffix)
+        return super(SpringLauncherContentNegotiation, self).select_renderer(request, renderers, format_suffix)
 
 
 class LogfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -46,8 +46,8 @@ class LogfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retr
     """
     serializer_class = LogfileSerializer
     queryset = Logfile.objects.all()
-    renderer_classes = (JSONRenderer, BrowsableAPIRenderer, SpringBoardLogRenderer)
-    content_negotiation_class = SpringBoardContentNegotiation
+    renderer_classes = (JSONRenderer, BrowsableAPIRenderer, SpringLauncherLogRenderer)
+    content_negotiation_class = SpringLauncherContentNegotiation
 
     def list(self, request, *args, **kwargs):
         # shorten `text` in list view (not in retrieve view)
@@ -73,10 +73,10 @@ class LogfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retr
         if (
                 request.accepted_renderer.format == 'html' and
                 format != 'api' and
-                instance.tags.filter(name='SpringBoard').exists()
+                instance.tags.filter(name='spring-launcher').exists()
         ):
-            self.renderer_classes = (SpringBoardLogRenderer,)
-            return Response({'logfile': instance}, template_name='logfile_SpringBoard_detail.html')
+            self.renderer_classes = (SpringLauncherLogRenderer,)
+            return Response({'logfile': instance}, template_name='logfile_spring-launcher_detail.html')
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

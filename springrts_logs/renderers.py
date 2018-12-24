@@ -13,7 +13,7 @@ from rest_framework import renderers
 from django.shortcuts import render as django_render
 
 
-class SpringBoardLogRenderer(renderers.BaseRenderer):
+class SpringLauncherLogRenderer(renderers.BaseRenderer):
     media_type = 'text/html'
     format = 'html'
     charset = 'utf-8'
@@ -51,4 +51,4 @@ class SpringBoardLogRenderer(renderers.BaseRenderer):
             except KeyError:
                 css_class = self.lvl2css['info']
             data['lines'].append((css_class, line))
-        return django_render(renderer_context['request'], 'logfile_SpringBoard_detail.html', data)
+        return django_render(renderer_context['request'], 'logfile_spring-launcher_detail.html', data)
