@@ -8,6 +8,7 @@
 # You should have received a copy of the GNU Affero General Public License v3
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.http import Http404
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
@@ -19,17 +20,33 @@ from .renderers import SpringLauncherLogRenderer
 
 class SpringLauncherContentNegotiation(DefaultContentNegotiation):
     def select_renderer(self, request, renderers, format_suffix=None):
+        format_query_param = self.settings.URL_FORMAT_OVERRIDE
+        format = format_suffix or request.query_params.get(format_query_param)
+        if format:
+            renderers = self.filter_renderers(renderers, format)
         accepts = self.get_accept_list(request)
-        if format_suffix != 'api' and 'text/html' in accepts:
-            pk = request.parser_context.get('kwargs', {}).get('pk')
-            if pk:
+
+        pk = request.parser_context.get('kwargs', {}).get('pk')
+        if pk:
+            try:
                 instance = Logfile.objects.get(pk=pk)
-                if format_suffix != 'json' and instance.tags.filter(name='spring-launcher').exists():
-                    for renderer in renderers:
-                        if isinstance(renderer, SpringLauncherLogRenderer):
+            except (Logfile.DoesNotExist, ValueError):
+                for renderer in renderers:
+                    if 'text/html' in accepts:
+                        if isinstance(renderer, BrowsableAPIRenderer):
                             return renderer, 'text/html'
                     else:
-                        raise RuntimeError('SpringLauncherLogRenderer not in list of renderers.')
+                        if isinstance(renderer, JSONRenderer):
+                            return renderer, 'application/json'
+                raise Http404
+
+            if format_suffix != 'api' and format != 'json' and 'text/html' in accepts:
+                    if format_suffix != 'json' and instance.tags.filter(name='spring-launcher').exists():
+                        for renderer in renderers:
+                            if isinstance(renderer, SpringLauncherLogRenderer):
+                                return renderer, 'text/html'
+                        else:
+                            raise RuntimeError('SpringLauncherLogRenderer not in list of renderers.')
 
         return super(SpringLauncherContentNegotiation, self).select_renderer(request, renderers, format_suffix)
 
