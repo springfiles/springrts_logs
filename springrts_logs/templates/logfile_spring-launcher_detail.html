@@ -14,11 +14,32 @@
     <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
 
     <style type="text/css">
-        A:link { COLOR: black }
-        A:visited { COLOR: black }
-        A:active { COLOR: black }
-        A:hover { COLOR: blue }
+        a:link,a:visited,a:active {
+            color: black;
+        }
+        a:hover {
+            color: blue;
+        }
     </style>
+
+    <script>
+        function set_tz() {
+            // replace logfile date at top of page with date in local TZ
+            var d = new Date("{{ logfile.created.isoformat }}");
+            var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            // navigator.browserLanguage for IE<=10
+            var lang = navigator.language ? navigator.language:navigator.browserLanguage;
+            document.getElementById("entrydate").innerHTML = d.toLocaleString(lang, { timeZone: tz });
+        }
+        function set_position() {
+            var url = location.href;
+            var url_split = url.split("#");
+            if (url_split.length > 1) {
+                jumptoobj = document.getElementById("L" + url_split[url_split.length - 1]);
+                jumptoobj.scrollIntoView();
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="container-fluid">
@@ -32,19 +53,15 @@
         <tbody>
 {% for level, text in lines %}
         <tr class="table-{{ level }}">
-            <td><pre style="color: black; margin-bottom: 0">{{ text }}</pre></td>
+            <td><a href="#L{{ forloop.counter }}" onclick="this.scrollIntoView()" id="L{{ forloop.counter }}" style="color: lightgrey">{{ forloop.counter }}</a></td><td><pre style="color: black; margin-bottom: 0">{{ text }}</pre></td>
         </tr>
 {% endfor %}
         </tbody>
     </table>
 </div>
-</body>
 <script>
-    // replace logfile date above with date in local TZ
-    var d = new Date("{{ logfile.created.isoformat }}");
-    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // navigator.browserLanguage for IE<=10
-    var lang = navigator.language ? navigator.language:navigator.browserLanguage;
-    document.getElementById("entrydate").innerHTML = d.toLocaleString(lang, { timeZone: tz });
+    set_tz();
+    set_position();
 </script>
+</body>
 </html>
