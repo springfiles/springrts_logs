@@ -12,6 +12,7 @@ from typing import Dict
 from django.db import models
 from django.urls import reverse
 from rest_framework.reverse import reverse
+from rest_hooks.signals import hook_event
 
 
 class Tag(models.Model):
@@ -56,6 +57,30 @@ class Logfile(models.Model):
             return '{}\n({} characters truncated)'.format(text[:length], len(text[length:]))
         else:
             return text
+
+    def serialize_hook(self, hook):
+        return {
+            'hook': hook.dict(),
+            'data': {
+                'id': self.pk,
+                'name': self.name,
+                'text': self.text,
+                'tags': list(self.tags.values_list(flat=True)),
+                'created': self.created,
+        }
+    }
+
+    def created_with_tags(self):
+        """
+        Custom event for webhook. Builtin "created" event is to early, because
+        the tags get attached _after_ the creation.
+        """
+        hook_event.send(
+            sender=self.__class__,
+            action='created_with_tags',
+            instance=self,
+            user_override=False
+        )
 
     class Meta:
         ordering = ('created',)

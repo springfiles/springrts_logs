@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'modernrpc',
+    'rest_hooks',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +83,11 @@ MODERNRPC_METHODS_MODULES = [
     'springrts_logs.rpc_methods',
 ]
 MODERNRPC_DOC_FORMAT = 'rst'
+
+HOOK_EVENTS = {
+    # 'any.event.name': 'App.Model.Action' (created/updated/deleted)
+    'logfile.added':       'springrts_logs.Logfile.created_with_tags+',
+}
 
 # import default site specific settings
 from .settings_local_ import *
