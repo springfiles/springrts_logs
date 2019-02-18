@@ -11,6 +11,7 @@
 from typing import Dict
 from django.db import models
 from django.urls import reverse
+from django.conf import settings
 from rest_framework.reverse import reverse
 from rest_hooks.signals import hook_event
 
@@ -70,17 +71,22 @@ class Logfile(models.Model):
         }
     }
 
-    def created_with_tags(self):
+    def created_with_tags(self, tags):
         """
         Custom event for webhook. Builtin "created" event is to early, because
         the tags get attached _after_ the creation.
+
+        :param list(str) tags: list of tags
         """
-        hook_event.send(
-            sender=self.__class__,
-            action='created_with_tags',
-            instance=self,
-            user_override=False
-        )
+        for tag in set(tags).intersection(set(settings.LOGFILE_TAG_TO_EVENT.keys())):
+            action = settings.LOGFILE_TAG_TO_EVENT[tag][1]
+            action = action.replace('springrts_logs.Logfile.', '').strip('+')
+            hook_event.send(
+                sender=self.__class__,
+                action=action,
+                instance=self,
+                user_override=False
+            )
 
     class Meta:
         ordering = ('created',)

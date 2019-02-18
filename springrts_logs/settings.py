@@ -84,10 +84,14 @@ MODERNRPC_METHODS_MODULES = [
 ]
 MODERNRPC_DOC_FORMAT = 'rst'
 
-HOOK_EVENTS = {
-    # 'any.event.name': 'App.Model.Action' (created/updated/deleted)
-    'logfile.added':       'springrts_logs.Logfile.created_with_tags+',
+LOGFILE_TAG_TO_EVENT = {
+    'spring-launcher': ('logfile.added.spring_launcher', 'springrts_logs.Logfile.created_spring_launcher+', ),
 }
+# HOOK_EVENTS = {
+#     # 'any.event.name': 'App.Model.Action' (created/updated/deleted)
+#     'logfile.added.spring_launcher': 'springrts_logs.Logfile.created_spring_launcher+',
+# }
+HOOK_EVENTS = dict(LOGFILE_TAG_TO_EVENT.values())
 
 # import default site specific settings
 from .settings_local_ import *

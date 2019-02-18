@@ -35,7 +35,7 @@ class LogfileSerializer(serializers.HyperlinkedModelSerializer):
             tags = [t.strip() for t in tags if t.strip()]
             tag_pks = [Tag.objects.get_or_create(name=tag)[0].pk for tag in tags]
             logfile.tags.add(*tag_pks)
-        logfile.created_with_tags()  # send custom rest_hook signal
+        logfile.created_with_tags(tags)  # send custom rest_hook signal
         return logfile
 
     def to_representation(self, instance):

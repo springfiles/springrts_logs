@@ -53,6 +53,10 @@ The same methods as JSON-RPC over HTTP are also available over plain TCP.
 
 The port can be set, when starting the service via ``./manage.py runserver_jsonrpc_over_tcp <port>``
 
+Webhooks
+--------
+A logfile upload can trigger a POST request to a specified URL. The message body will contain the logfiles text, title (name), tags and upload date in a JSON object. Different webhooks may be triggered for different tags.
+
 RSS feed
 --------
 An RSS feed listing the latest logfile uploads can be found at https://dom.ain/feed/latest/
