@@ -27,7 +27,7 @@ class SpringLauncherLogRenderer(renderers.BaseRenderer):
     }
 
     def render(self, data, media_type=None, renderer_context=None):
-        text = data['logfile'].text
+        text = data['text'] if "text" in data else data['logfile'].text
         end = 0
         dates = []
         texts = []
@@ -43,7 +43,7 @@ class SpringLauncherLogRenderer(renderers.BaseRenderer):
             m = self.date_regex.match(line)
             try:
                 debug_level = m.groups()[0]
-            except IndexError:
+            except (IndexError, AttributeError):
                 debug_level = 'info'
             # this should really be done in the template, but it is easier here:
             try:
