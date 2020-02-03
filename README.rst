@@ -26,22 +26,22 @@ Interfaces
 
 REST
 ....
-A RESTish HTTP interface is available. Interactive online documentation is available the document root (https://dom.ain/), as well as at the resource endpoints. Additionally
+A RESTish HTTP interface is available. Interactive online documentation is available the document root (https://logs.springrts.com/), as well as at the resource endpoints. Additionally
 
 The Swagger/OpenAPI generator used (`drf-yasg <https://github.com/axnsan12/drf-yasg>`_) creates only a OpenAPI version 2 schema, which does not support links in headers (v3 required). So pagination is done through entries in the JSON response body.
 
 Documentation and schemes for client auto-generation are available:
 
 * Swagger/OpenAPI:
-   * Swagger-UI: https://dom.ain/swagger/
-   * Swagger spec as JSON: https://dom.ain/swagger.json
-   * Swagger spec as YAML: https://dom.ain/swagger.yaml
-   * ReDoc: https://dom.ain/redoc/
-* Core API: https://dom.ain/schema.js
+   * Swagger-UI: https://logs.springrts.com/swagger/
+   * Swagger spec as JSON: https://logs.springrts.com/swagger.json
+   * Swagger spec as YAML: https://logs.springrts.com/swagger.yaml
+   * ReDoc: https://logs.springrts.com/redoc/
+* Core API: https://logs.springrts.com/schema.js
 
 JSON-RPC and XML-RPC over HTTP
 ..............................
-Methods ``logfile_create``, ``logfile_get``, ``logfile_list`` and ``tag_list`` are available at https://dom.ain/rpc/ for both JSON-RPC (v2) and XML-RPC. At that URL is also a website with online documentation, when opened with a browser.
+Methods ``logfile_create``, ``logfile_get``, ``logfile_list`` and ``tag_list`` are available at https://logs.springrts.com/rpc/ for both JSON-RPC (v2) and XML-RPC. At that URL is also a website with online documentation, when opened with a browser.
 
 Whether to server HTML (documentation), JSON-RPC or XML-RPC is decided by the content type of the request.
 
@@ -59,7 +59,7 @@ A logfile upload can trigger a POST request to a specified URL. The message body
 
 RSS feed
 --------
-An RSS feed listing the latest logfile uploads can be found at https://dom.ain/feed/latest/
+An RSS feed listing the latest logfile uploads can be found at https://logs.springrts.com/feed/latest/
 
 Installing
 ----------
