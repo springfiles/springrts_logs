@@ -1,3 +1,4 @@
 .idea
 **/__pycache__
 springrts_logs/settings_local.py
+*.pyc
